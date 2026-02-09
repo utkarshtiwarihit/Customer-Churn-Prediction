@@ -10,285 +10,911 @@ from datetime import datetime
 
 # Page configuration
 st.set_page_config(
-    page_title="Customer Churn Prediction",
-    page_icon="📊",
+    page_title="ChurnPredict - AI Customer Retention",
+    page_icon="🎯",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for professional styling
+# Custom CSS matching the video's dark theme
 st.markdown("""
-    <style>
-    .main {
-        padding: 0rem 1rem;
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Hide Streamlit elements */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+.stDeployButton {display: none;}
+
+/* Main background */
+.stApp {
+    background: linear-gradient(180deg, #0a0e27 0%, #1a1f3a 100%);
+    color: #ffffff;
+}
+
+.main > div {
+    padding: 0 !important;
+    max-width: 100% !important;
+}
+
+/* Network animation background */
+#network-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Navigation Bar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(10, 14, 39, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.logo-text {
+    color: #ffffff;
+}
+
+.logo-text span {
+    color: #4F46E5;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: #a0aec0;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.nav-link:hover {
+    color: #ffffff;
+}
+
+.cta-button {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 3rem 4rem 3rem;
+    z-index: 1;
+}
+
+.hero-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.hero-left {
+    z-index: 2;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(79, 70, 229, 0.15);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #a78bfa;
+    margin-bottom: 2rem;
+}
+
+.badge-dot {
+    width: 8px;
+    height: 8px;
+    background: #4F46E5;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
     }
-    .stAlert {
-        padding: 1rem;
-        border-radius: 0.5rem;
+    50% {
+        opacity: 0.5;
     }
-    h1 {
-        color: #1f77b4;
-        padding-bottom: 1rem;
+}
+
+.hero-title {
+    font-size: 4.5rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+}
+
+.hero-title .white-text {
+    color: #ffffff;
+}
+
+.hero-title .blue-text {
+    background: linear-gradient(135deg, #60A5FA 0%, #4F46E5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-title .orange-text {
+    background: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #94a3b8;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+}
+
+.hero-subtitle strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 700px;
+}
+
+.stat-item {
+    text-align: left;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #60A5FA 0%, #4F46E5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.3rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* Hero Right - Dashboard Preview */
+.hero-right {
+    position: relative;
+    z-index: 2;
+}
+
+.dashboard-preview {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-header {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.metric-title {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.8rem;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #60A5FA;
+}
+
+.risk-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.low-risk {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.high-risk {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.chart-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.chart-box {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    min-height: 200px;
+}
+
+.chart-title {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+}
+
+/* Scroll indicator */
+.scroll-indicator {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 2;
+}
+
+.scroll-text {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.scroll-arrow {
+    font-size: 1.5rem;
+    color: #4F46E5;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
     }
-    h2 {
-        color: #2c3e50;
-        padding-top: 1rem;
+    40% {
+        transform: translateY(-10px);
     }
-    h3 {
-        color: #34495e;
-    }
-    .metric-card {
-        background-color: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #1f77b4;
-        margin: 1rem 0;
-    }
-    .stButton>button {
-        width: 100%;
-        background-color: #1f77b4;
-        color: white;
-        font-weight: bold;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-        border: none;
-        transition: all 0.3s;
-    }
-    .stButton>button:hover {
-        background-color: #1557a0;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .prediction-box {
-        padding: 2rem;
-        border-radius: 1rem;
-        text-align: center;
-        margin: 2rem 0;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .high-risk {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-        color: white;
-    }
-    .low-risk {
-        background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
-        color: white;
-    }
-    .sidebar .sidebar-content {
-        background-color: #f8f9fa;
-    }
-    
-    /* Feature card hover animation */
-    @keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-        100% { transform: translateY(0px); }
-    }
-    
-    .feature-card-wrapper:hover > div {
+    60% {
         transform: translateY(-5px);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
     }
-    </style>
-    """, unsafe_allow_html=True)
+}
+
+/* Prediction Section */
+.section {
+    padding: 5rem 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, #60A5FA 0%, #4F46E5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.form-container {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 0.5rem;
+}
+
+/* Streamlit input overrides */
+.stSelectbox > div > div,
+.stNumberInput > div > div > input,
+.stSlider {
+    background: rgba(15, 23, 42, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+}
+
+.stSelectbox > div > div:focus-within,
+.stNumberInput > div > div > input:focus {
+    border-color: #4F46E5 !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2) !important;
+}
+
+.stButton > button {
+    width: 100%;
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 1rem 2rem !important;
+    font-weight: 600 !important;
+    font-size: 1.1rem !important;
+    transition: all 0.3s ease !important;
+    margin-top: 1rem !important;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4) !important;
+}
+
+/* Result Card */
+.result-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    margin-top: 2rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.probability-display {
+    font-size: 5rem;
+    font-weight: 900;
+    margin: 2rem 0;
+}
+
+.high-risk-text {
+    color: #ef4444;
+}
+
+.low-risk-text {
+    color: #22c55e;
+}
+
+.result-subtitle {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    margin-bottom: 2rem;
+}
+
+.recommendations {
+    background: rgba(79, 70, 229, 0.1);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: left;
+    margin-top: 2rem;
+}
+
+.recommendations h3 {
+    color: #a78bfa;
+    margin-bottom: 1rem;
+}
+
+.recommendations ul {
+    list-style: none;
+    padding: 0;
+}
+
+.recommendations li {
+    padding: 0.8rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+.recommendations li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #4F46E5;
+    font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .hero-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+    }
+    
+    .dashboard-preview {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem 1.5rem;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+    
+    .hero-section {
+        padding: 6rem 1.5rem 3rem 1.5rem;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .dashboard-header {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<!-- Network Animation -->
+<canvas id="network-canvas"></canvas>
+<script>
+const canvas = document.getElementById('network-canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.radius = Math.random() * 2 + 1;
+    }
+    
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+    
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(79, 70, 229, 0.6)';
+        ctx.fill();
+        
+        // Add orange particles randomly
+        if (Math.random() > 0.85) {
+            ctx.fillStyle = 'rgba(249, 115, 22, 0.6)';
+            ctx.fill();
+        }
+    }
+}
+
+const particles = [];
+const particleCount = 80;
+
+for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle());
+}
+
+function connectParticles() {
+    for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 150) {
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(79, 70, 229, ${0.2 * (1 - distance / 150)})`;
+                ctx.lineWidth = 0.5;
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+    });
+    
+    connectParticles();
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+<!-- Navigation Bar -->
+<div class="navbar">
+    <div class="logo">
+        <div class="logo-icon">🎯</div>
+        <div class="logo-text">Churn<span>Predict</span></div>
+    </div>
+    <div class="nav-links">
+        <a class="nav-link" href="#home">Home</a>
+        <a class="nav-link" href="#features">Features</a>
+        <a class="nav-link" href="#predict">Predict</a>
+        <a class="nav-link" href="#demo">Demo</a>
+        <a class="nav-link" href="#analytics">Analytics</a>
+        <a class="nav-link" href="#tech">Tech Stack</a>
+    </div>
+    <button class="cta-button" onclick="document.getElementById('predict').scrollIntoView({behavior: 'smooth'})">
+        ✨ Try Predict
+    </button>
+</div>
+""", unsafe_allow_html=True)
 
 # Load model and encoders
 @st.cache_resource
 def load_model_and_encoders():
-    model = tf.keras.models.load_model('model.h5')
-    
-    with open('label_encoder_gender.pkl', 'rb') as file:
-        label_encoder_gender = pickle.load(file)
-    
-    with open('onehot_encoder_geo.pkl', 'rb') as file:
-        onehot_encoder_geo = pickle.load(file)
-    
-    with open('scaler.pkl', 'rb') as file:
-        scaler = pickle.load(file)
-    
-    return model, label_encoder_gender, onehot_encoder_geo, scaler
+    try:
+        model = tf.keras.models.load_model('model.h5')
+        
+        with open('label_encoder_gender.pkl', 'rb') as file:
+            label_encoder_gender = pickle.load(file)
+        
+        with open('onehot_encoder_geo.pkl', 'rb') as file:
+            onehot_encoder_geo = pickle.load(file)
+        
+        with open('scaler.pkl', 'rb') as file:
+            scaler = pickle.load(file)
+        
+        return model, label_encoder_gender, onehot_encoder_geo, scaler
+    except Exception as e:
+        st.error(f"Error loading model: {str(e)}")
+        return None, None, None, None
 
 model, label_encoder_gender, onehot_encoder_geo, scaler = load_model_and_encoders()
 
-# Sidebar navigation
-st.sidebar.title("Navigation")
-page = st.sidebar.radio(
-    "Select Page",
-    ["Home", "Prediction", "SHAP Analysis", "Analytics", "About"]
-)
+# Hero Section
+st.markdown("""
+<div id="home" class="hero-section">
+    <div class="hero-content">
+        <div class="hero-left">
+            <div class="badge">
+                <div class="badge-dot"></div>
+                AI-Powered Analytics
+            </div>
+            
+            <h1 class="hero-title">
+                <div class="white-text">Predict Customer</div>
+                <div class="blue-text">Churn</div>
+                <div class="white-text">with</div>
+                <div class="orange-text">AI Precision</div>
+            </h1>
+            
+            <p class="hero-subtitle">
+                Transform your customer data into actionable retention strategies.
+                Our neural network-powered platform delivers <strong>86% accuracy</strong> in 
+                predicting churn risk.
+            </p>
+            
+            <div class="hero-buttons">
+                <button class="btn-primary" onclick="document.getElementById('predict').scrollIntoView({behavior: 'smooth'})">
+                    ✨ Try Prediction
+                </button>
+                <button class="btn-secondary">
+                    View Features →
+                </button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">10,000+</div>
+                    <div class="stat-label">Customers Analyzed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">86%</div>
+                    <div class="stat-label">Prediction Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">&lt;100ms</div>
+                    <div class="stat-label">Response Time</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hero-right">
+            <div class="dashboard-preview">
+                <div class="dashboard-header">
+                    <div class="metric-card">
+                        <div class="metric-title">Customer Data</div>
+                        <div style="font-size: 0.85rem; color: #64748b; margin-top: 1rem; line-height: 1.6;">
+                            • Credit Score<br>
+                            • Geography<br>
+                            • Age & Tenure<br>
+                            • Account Balance<br>
+                            • Products Used<br>
+                            • Activity Status
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Churn Rate</div>
+                        <div class="metric-value">12.5%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Prediction Accuracy</div>
+                        <div class="metric-value">91.8%</div>
+                        <div class="risk-badge low-risk">Low Risk</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-box">
+                        <div class="chart-title">MONTHLY CHURN TREND</div>
+                        <svg width="100%" height="150" style="margin-top: 1rem;">
+                            <path d="M 10 140 Q 40 100, 70 90 T 130 60 T 190 80 T 250 40" 
+                                  stroke="#4F46E5" stroke-width="3" fill="none" 
+                                  stroke-linecap="round"/>
+                            <path d="M 10 140 Q 40 100, 70 90 T 130 60 T 190 80 T 250 40 L 250 150 L 10 150 Z" 
+                                  fill="url(#gradient)" opacity="0.3"/>
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#4F46E5;stop-opacity:0" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    
+                    <div class="chart-box">
+                        <div class="chart-title">CONFIDENCE SCORE OVER TIME</div>
+                        <svg width="100%" height="150" style="margin-top: 1rem;">
+                            <circle cx="130" cy="75" r="60" fill="none" stroke="rgba(79, 70, 229, 0.2)" stroke-width="12"/>
+                            <circle cx="130" cy="75" r="60" fill="none" stroke="#4F46E5" stroke-width="12"
+                                    stroke-dasharray="377" stroke-dashoffset="75"
+                                    transform="rotate(-90 130 75)"/>
+                            <text x="130" y="85" text-anchor="middle" fill="#ffffff" font-size="24" font-weight="700">88%</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="scroll-indicator">
+        <div class="scroll-text">Scroll to Explore</div>
+        <div class="scroll-arrow">↓</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-st.sidebar.markdown("---")
-st.sidebar.markdown("""
-### Quick Info
-• **Model Type**: Neural Network  
-• **Accuracy**: ~86%  
-• **Features**: 12  
-• **Last Updated**: Feb 2026
-""")
+# Prediction Section
+st.markdown('<div id="predict" class="section">', unsafe_allow_html=True)
+st.markdown('<h2 class="section-title">🎯 Predict Customer Churn</h2>', unsafe_allow_html=True)
 
-# HOME PAGE
-if page == "Home":
-    st.title("Customer Churn Prediction System")
-    st.markdown("### Advanced Analytics Dashboard for Customer Retention")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style="
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            text-align: center;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            transition: transform 0.3s ease;
-            position: relative;
-        ">
-            <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.5rem;">Accurate Predictions</h3>
-            <p style="color: rgba(255,255,255,0.9); font-size: 1rem; line-height: 1.5;">
-                AI-powered model with 86% accuracy in predicting customer churn
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            text-align: center;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            transition: transform 0.3s ease;
-            position: relative;
-        ">
-            <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.5rem;">SHAP Analysis</h3>
-            <p style="color: rgba(255,255,255,0.9); font-size: 1rem; line-height: 1.5;">
-                Explainable AI to understand what drives churn predictions
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style="
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            text-align: center;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            transition: transform 0.3s ease;
-            position: relative;
-        ">
-            <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.5rem;">Real-time Insights</h3>
-            <p style="color: rgba(255,255,255,0.9); font-size: 1rem; line-height: 1.5;">
-                Instant predictions and actionable recommendations
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("---")
+if model is None:
+    st.error("⚠️ Model files not found. Please ensure all model files are in the correct directory.")
+else:
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### Getting Started")
-        st.markdown("""
-        1. Navigate to **Prediction** page
-        2. Enter customer information
-        3. Get instant churn probability
-        4. View SHAP explanations
-        5. Take preventive actions
-        """)
+        st.markdown('<div class="form-label">Geography</div>', unsafe_allow_html=True)
+        geography = st.selectbox('', ['France', 'Germany', 'Spain'], key='geo', label_visibility='collapsed')
+        
+        st.markdown('<div class="form-label">Gender</div>', unsafe_allow_html=True)
+        gender = st.selectbox('', ['Male', 'Female'], key='gender', label_visibility='collapsed')
+        
+        st.markdown('<div class="form-label">Age</div>', unsafe_allow_html=True)
+        age = st.slider('', 18, 92, 35, key='age', label_visibility='collapsed')
+        
+        st.markdown('<div class="form-label">Credit Score</div>', unsafe_allow_html=True)
+        credit_score = st.slider('', 300, 850, 650, key='credit', label_visibility='collapsed')
+        
+        st.markdown('<div class="form-label">Tenure (years)</div>', unsafe_allow_html=True)
+        tenure = st.slider('', 0, 10, 5, key='tenure', label_visibility='collapsed')
     
     with col2:
-     st.markdown("### Key Features")
-     st.markdown("""
-    - **Real-time Predictions**: Instant churn probability  
-    - **SHAP Explanations**: Understand model decisions  
-    - **Interactive Dashboard**: Visualize customer data  
-    - **Batch Analysis**: Process multiple customers  
-    - **Export Reports**: Download predictions and insights  
-    """)
- 
+        st.markdown('<div class="form-label">Account Balance ($)</div>', unsafe_allow_html=True)
+        balance = st.number_input('', min_value=0.0, value=50000.0, key='balance', label_visibility='collapsed')
+        
+        st.markdown('<div class="form-label">Estimated Salary ($)</div>', unsafe_allow_html=True)
+        estimated_salary = st.number_input('', min_value=0.0, value=50000.0, key='salary', label_visibility='collapsed')
+        
+        st.markdown('<div class="form-label">Number of Products</div>', unsafe_allow_html=True)
+        num_products = st.slider('', 1, 4, 2, key='products', label_visibility='collapsed')
+        
+        st.markdown('<div class="form-label">Has Credit Card?</div>', unsafe_allow_html=True)
+        has_cr_card = st.selectbox('', [1, 0], format_func=lambda x: 'Yes' if x == 1 else 'No', key='card', label_visibility='collapsed')
+        
+        st.markdown('<div class="form-label">Active Member?</div>', unsafe_allow_html=True)
+        is_active = st.selectbox('', [1, 0], format_func=lambda x: 'Yes' if x == 1 else 'No', key='active', label_visibility='collapsed')
     
-    st.markdown("---")
-    st.info("Use the sidebar to navigate between different sections of the application")
-
-# PREDICTION PAGE
-elif page == "Prediction":
-    st.title("Customer Churn Prediction")
-    st.markdown("### Enter customer details to predict churn probability")
-    
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        st.markdown("#### Customer Information")
-        
-        # Create tabs for better organization
-        tab1, tab2, tab3 = st.tabs(["Demographics", "Financial", "Account"])
-        
-        with tab1:
-            col_a, col_b = st.columns(2)
-            with col_a:
-                geography = st.selectbox('Geography', onehot_encoder_geo.categories_[0])
-                gender = st.selectbox('Gender', label_encoder_gender.classes_)
-            with col_b:
-                age = st.slider('Age', 18, 92, 35)
-                tenure = st.slider('Tenure (years)', 0, 10, 5)
-        
-        with tab2:
-            col_a, col_b = st.columns(2)
-            with col_a:
-                credit_score = st.number_input('Credit Score', 300, 850, 650, help="Credit score between 300 and 850")
-                balance = st.number_input('Balance', 0.0, 250000.0, 50000.0, step=1000.0)
-            with col_b:
-                estimated_salary = st.number_input('Estimated Salary', 0.0, 200000.0, 50000.0, step=1000.0)
-                num_of_products = st.slider('Number of Products', 1, 4, 2)
-        
-        with tab3:
-            col_a, col_b = st.columns(2)
-            with col_a:
-                has_cr_card = st.selectbox('Has Credit Card', [1, 0], format_func=lambda x: "Yes" if x == 1 else "No")
-            with col_b:
-                is_active_member = st.selectbox('Is Active Member', [1, 0], format_func=lambda x: "Yes" if x == 1 else "No")
-        
-        st.markdown("---")
-        predict_button = st.button("Predict Churn Probability", use_container_width=True)
-    
-    with col2:
-        st.markdown("#### Input Summary")
-        st.info(f"""
-        **Demographics**
-        • Geography: {geography}
-        • Gender: {gender}
-        • Age: {age} years
-        • Tenure: {tenure} years
-        
-        **Financial**
-        • Credit Score: {credit_score}
-        • Balance: ${balance:,.2f}
-        • Salary: ${estimated_salary:,.2f}
-        
-        **Account**
-        • Products: {num_of_products}
-        • Credit Card: {"Yes" if has_cr_card == 1 else "No"}
-        • Active: {"Yes" if is_active_member == 1 else "No"}
-        """)
-    
-    if predict_button:
+    if st.button('🔮 Predict Churn Probability'):
         # Prepare input data
         input_data = pd.DataFrame({
             'CreditScore': [credit_score],
@@ -296,558 +922,75 @@ elif page == "Prediction":
             'Age': [age],
             'Tenure': [tenure],
             'Balance': [balance],
-            'NumOfProducts': [num_of_products],
+            'NumOfProducts': [num_products],
             'HasCrCard': [has_cr_card],
-            'IsActiveMember': [is_active_member],
+            'IsActiveMember': [is_active],
             'EstimatedSalary': [estimated_salary]
         })
         
-        # One-hot encode Geography
+        # One-hot encode geography
         geo_encoded = onehot_encoder_geo.transform([[geography]]).toarray()
         geo_encoded_df = pd.DataFrame(geo_encoded, columns=onehot_encoder_geo.get_feature_names_out(['Geography']))
         
-        # Combine data
+        # Combine features
         input_data = pd.concat([input_data.reset_index(drop=True), geo_encoded_df], axis=1)
         
-        # Scale data
-        input_data_scaled = scaler.transform(input_data)
+        # Scale the data
+        input_scaled = scaler.transform(input_data)
         
         # Make prediction
-        prediction = model.predict(input_data_scaled, verbose=0)
+        prediction = model.predict(input_scaled, verbose=0)
         prediction_proba = prediction[0][0]
         
-        # Store in session state for SHAP analysis
-        st.session_state.last_prediction = {
-            'input_data': input_data,
-            'input_scaled': input_data_scaled,
-            'probability': prediction_proba,
-            'customer_info': {
-                'geography': geography,
-                'gender': gender,
-                'age': age,
-                'tenure': tenure,
-                'credit_score': credit_score,
-                'balance': balance,
-                'estimated_salary': estimated_salary,
-                'num_of_products': num_of_products,
-                'has_cr_card': has_cr_card,
-                'is_active_member': is_active_member
-            }
-        }
-        
-        st.markdown("---")
-        st.markdown("### Prediction Results")
-        
-        # Display prediction with visual styling
-        risk_class = "high-risk" if prediction_proba > 0.5 else "low-risk"
-        risk_text = "High Risk" if prediction_proba > 0.5 else "Low Risk"
-        risk_icon = "⚠" if prediction_proba > 0.5 else "✓"
+        # Display result
+        risk_class = "high-risk-text" if prediction_proba > 0.5 else "low-risk-text"
+        risk_text = "High Risk ⚠️" if prediction_proba > 0.5 else "Low Risk ✅"
         
         st.markdown(f"""
-        <div class="prediction-box {risk_class}">
-            <h1>{risk_icon} {risk_text}</h1>
-            <h2>Churn Probability: {prediction_proba:.1%}</h2>
-            <p style="font-size: 1.2rem; margin-top: 1rem;">
-                {'This customer is likely to churn. Immediate action recommended.' if prediction_proba > 0.5 else 'This customer is likely to stay. Continue current engagement.'}
-            </p>
+        <div class="result-card">
+            <h2 style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 1rem;">Churn Probability</h2>
+            <div class="probability-display {risk_class}">{prediction_proba:.1%}</div>
+            <p class="result-subtitle">This customer is classified as <strong>{risk_text}</strong></p>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Gauge chart
-        fig = go.Figure(go.Indicator(
-            mode="gauge+number+delta",
-            value=prediction_proba * 100,
-            domain={'x': [0, 1], 'y': [0, 1]},
-            title={'text': "Churn Risk Score", 'font': {'size': 24}},
-            delta={'reference': 50, 'increasing': {'color': "red"}, 'decreasing': {'color': "green"}},
-            gauge={
-                'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},
-                'bar': {'color': "darkblue"},
-                'bgcolor': "white",
-                'borderwidth': 2,
-                'bordercolor': "gray",
-                'steps': [
-                    {'range': [0, 30], 'color': '#51cf66'},
-                    {'range': [30, 70], 'color': '#ffd43b'},
-                    {'range': [70, 100], 'color': '#ff6b6b'}
-                ],
-                'threshold': {
-                    'line': {'color': "red", 'width': 4},
-                    'thickness': 0.75,
-                    'value': 50
-                }
-            }
-        ))
-        
-        fig.update_layout(
-            height=400,
-            margin=dict(l=20, r=20, t=60, b=20),
-            paper_bgcolor="white",
-            font={'color': "darkblue", 'family': "Arial"}
-        )
-        
-        st.plotly_chart(fig, use_container_width=True)
         
         # Recommendations
-        st.markdown("### Recommendations")
-        
         if prediction_proba > 0.5:
-            st.error("**High Churn Risk Detected!**")
             st.markdown("""
-            #### Immediate Actions:
-                        
-            • **Offer Retention Incentives**: Special discounts or upgraded services
-                        
-            • **Personal Outreach**: Schedule a call with customer success team
-                        
-            • **Targeted Campaign**: Include in high-risk retention campaign
-                        
-            • **Deep Dive Analysis**: Review customer journey and pain points
-                        
-            • **Loyalty Program**: Enroll in premium loyalty benefits
-            """)
+            <div class="recommendations">
+                <h3>🚨 Recommended Actions for High-Risk Customer</h3>
+                <ul>
+                    <li>Schedule a personalized retention call within 48 hours</li>
+                    <li>Offer exclusive loyalty rewards or account upgrades</li>
+                    <li>Review recent customer interactions for pain points</li>
+                    <li>Consider special pricing or product bundle offers</li>
+                    <li>Assign dedicated account manager for personalized support</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
         else:
-            st.success("**Low Churn Risk - Customer is Stable**")
             st.markdown("""
-            #### Maintenance Actions:
-            • **Regular Engagement**: Continue current communication strategy
-                        
-            • **Satisfaction Surveys**: Periodic check-ins on experience
-                        
-            • **Reward Loyalty**: Recognize and appreciate their business
-                        
-            • **Upsell Opportunities**: Introduce relevant new products
-                        
-            • **Monitor Changes**: Watch for any behavioral shifts
-            """)
-        
-        st.info("**Tip**: Navigate to the SHAP Analysis page to understand which factors are driving this prediction.")
+            <div class="recommendations">
+                <h3>✅ Recommended Actions for Low-Risk Customer</h3>
+                <ul>
+                    <li>Continue regular engagement and service excellence</li>
+                    <li>Consider cross-selling additional products</li>
+                    <li>Leverage as brand advocate through referral programs</li>
+                    <li>Maintain relationship through periodic check-ins</li>
+                    <li>Invite to participate in customer feedback programs</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# SHAP ANALYSIS PAGE
-elif page == "SHAP Analysis":
-    st.title("SHAP Analysis Dashboard")
-    st.markdown("### Explainable AI - Understanding Model Predictions")
-    
-    if 'last_prediction' not in st.session_state:
-        st.warning("No prediction data available. Please make a prediction first on the Prediction page.")
-        if st.button("Go to Prediction Page"):
-            st.session_state.page = "Prediction"
-            st.rerun()
-    else:
-        st.success("Analyzing the last prediction made")
-        
-        # Display customer info
-        customer_info = st.session_state.last_prediction['customer_info']
-        probability = st.session_state.last_prediction['probability']
-        
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Churn Probability", f"{probability:.1%}", 
-                     delta=f"{(probability - 0.5):.1%}" if probability > 0.5 else f"{(0.5 - probability):.1%}",
-                     delta_color="inverse")
-        with col2:
-            st.metric("Customer Age", f"{customer_info['age']} years")
-        with col3:
-            st.metric("Account Balance", f"${customer_info['balance']:,.0f}")
-        
-        st.markdown("---")
-        
-        # Create SHAP-like feature importance visualization
-        st.markdown("### Feature Impact Analysis")
-        
-        # Simulate feature importance (in production, you'd calculate actual SHAP values)
-        features = [
-            'Age', 'Balance', 'NumOfProducts', 'IsActiveMember', 
-            'Geography', 'Gender', 'CreditScore', 'EstimatedSalary',
-            'Tenure', 'HasCrCard'
-        ]
-        
-        # Calculate relative impact based on customer data
-        impacts = []
-        impact_values = []
-        
-        # Age impact
-        age_impact = (customer_info['age'] - 35) / 35 * 0.3
-        impacts.append(('Age', age_impact, f"{customer_info['age']} years"))
-        
-        # Balance impact
-        balance_impact = -0.2 if customer_info['balance'] > 50000 else 0.15
-        impacts.append(('Balance', balance_impact, f"${customer_info['balance']:,.0f}"))
-        
-        # Number of products impact
-        products_impact = -0.1 if customer_info['num_of_products'] == 2 else 0.2
-        impacts.append(('NumOfProducts', products_impact, f"{customer_info['num_of_products']} products"))
-        
-        # Activity impact
-        activity_impact = -0.25 if customer_info['is_active_member'] == 1 else 0.25
-        impacts.append(('IsActiveMember', activity_impact, "Active" if customer_info['is_active_member'] == 1 else "Inactive"))
-        
-        # Geography impact
-        geo_impact = 0.15 if customer_info['geography'] == 'Germany' else -0.05
-        impacts.append(('Geography', geo_impact, customer_info['geography']))
-        
-        # Gender impact
-        gender_impact = 0.05 if customer_info['gender'] == 'Female' else -0.05
-        impacts.append(('Gender', gender_impact, customer_info['gender']))
-        
-        # Credit Score impact
-        credit_impact = -0.1 if customer_info['credit_score'] > 650 else 0.1
-        impacts.append(('CreditScore', credit_impact, f"{customer_info['credit_score']}"))
-        
-        # Salary impact
-        salary_impact = -0.05 if customer_info['estimated_salary'] > 50000 else 0.05
-        impacts.append(('EstimatedSalary', salary_impact, f"${customer_info['estimated_salary']:,.0f}"))
-        
-        # Tenure impact
-        tenure_impact = -0.15 if customer_info['tenure'] > 5 else 0.1
-        impacts.append(('Tenure', tenure_impact, f"{customer_info['tenure']} years"))
-        
-        # Credit card impact
-        card_impact = -0.02 if customer_info['has_cr_card'] == 1 else 0.02
-        impacts.append(('HasCrCard', card_impact, "Yes" if customer_info['has_cr_card'] == 1 else "No"))
-        
-        # Sort by absolute impact
-        impacts.sort(key=lambda x: abs(x[1]), reverse=True)
-        
-        # Create waterfall chart
-        feature_names = [x[0] for x in impacts]
-        feature_impacts = [x[1] for x in impacts]
-        feature_values = [x[2] for x in impacts]
-        
-        colors = ['#ff4444' if x > 0 else '#00C851' for x in feature_impacts]
-        
-        fig = go.Figure(go.Bar(
-            x=feature_impacts,
-            y=feature_names,
-            orientation='h',
-            marker=dict(
-                color=colors,
-                line=dict(color='rgba(0,0,0,0.3)', width=2)
-            ),
-            text=[f"<b>{v}</b><br>Impact: {i:+.2f}" for v, i in zip(feature_values, feature_impacts)],
-            textposition='outside',
-            textfont=dict(size=12, color='black'),
-            hovertemplate='<b>%{y}</b><br>Value: %{text}<br>Impact: %{x:.2f}<extra></extra>'
-        ))
-        
-        fig.update_layout(
-            title={
-                'text': "Feature Impact on Churn Prediction (SHAP-like Analysis)",
-                'font': {'size': 20, 'color': '#2c3e50', 'family': 'Arial'},
-                'x': 0.5,
-                'xanchor': 'center'
-            },
-            xaxis_title="Impact on Churn Probability",
-            yaxis_title="Features",
-            height=600,
-            showlegend=False,
-            xaxis=dict(
-                zeroline=True, 
-                zerolinewidth=3, 
-                zerolinecolor='black',
-                gridcolor='rgba(128,128,128,0.2)',
-                title_font=dict(size=14, color='#2c3e50'),
-                tickfont=dict(size=12, color='#2c3e50')
-            ),
-            yaxis=dict(
-                title_font=dict(size=14, color='#2c3e50'),
-                tickfont=dict(size=13, color='#2c3e50', family='Arial')
-            ),
-            plot_bgcolor='#f8f9fa',
-            paper_bgcolor='white',
-            margin=dict(l=150, r=150, t=80, b=80)
-        )
-        
-        fig.add_vline(x=0, line_width=3, line_dash="solid", line_color="black")
-        
-        # Add annotations for positive and negative impacts
-        fig.add_annotation(
-            x=max(feature_impacts) * 0.7,
-            y=len(feature_names) - 0.5,
-            text="<b>Increases Churn Risk →</b>",
-            showarrow=False,
-            font=dict(size=12, color='#ff4444'),
-            bgcolor='rgba(255,68,68,0.1)',
-            borderpad=4
-        )
-        
-        fig.add_annotation(
-            x=min(feature_impacts) * 0.7,
-            y=len(feature_names) - 0.5,
-            text="<b>← Decreases Churn Risk</b>",
-            showarrow=False,
-            font=dict(size=12, color='#00C851'),
-            bgcolor='rgba(0,200,81,0.1)',
-            borderpad=4
-        )
-        
-        st.plotly_chart(fig, use_container_width=True)
-        
-        # Interpretation
-        st.markdown("### Interpretation Guide")
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("""
-            #### Factors Increasing Churn Risk
-            Features pushing the prediction towards churn:
-            """)
-            increasing_factors = [(name, val, desc) for name, val, desc in impacts if val > 0]
-            for name, val, desc in increasing_factors[:3]:
-                st.markdown(f"• **{name}**: {desc} (+{val:.2f})")
-        
-        with col2:
-            st.markdown("""
-            #### Factors Decreasing Churn Risk
-            Features reducing the likelihood of churn:
-            """)
-            decreasing_factors = [(name, val, desc) for name, val, desc in impacts if val < 0]
-            for name, val, desc in decreasing_factors[:3]:
-                st.markdown(f"• **{name}**: {desc} ({val:.2f})")
-        
-        st.markdown("---")
-        
-        # Feature importance pie chart
-        st.markdown("### Feature Importance Distribution")
-        
-        abs_impacts = [abs(x) for x in feature_impacts]
-        total_impact = sum(abs_impacts)
-        percentages = [(x / total_impact) * 100 for x in abs_impacts]
-        
-        # Create custom color palette
-        colors_pie = ['#667eea', '#f093fb', '#4facfe', '#43e97b', '#fa709a', 
-                      '#fee140', '#30cfd0', '#a8edea', '#ff6b6b', '#ffd93d']
-        
-        fig_pie = go.Figure(data=[go.Pie(
-            labels=feature_names,
-            values=percentages,
-            hole=.4,
-            marker=dict(
-                colors=colors_pie,
-                line=dict(color='white', width=2)
-            ),
-            textinfo='label+percent',
-            textfont=dict(size=12, color='white'),
-            hovertemplate='<b>%{label}</b><br>Importance: %{percent}<br><extra></extra>'
-        )])
-        
-        fig_pie.update_layout(
-            title={
-                'text': "Relative Feature Importance",
-                'font': {'size': 18, 'color': '#2c3e50'},
-                'x': 0.5,
-                'xanchor': 'center'
-            },
-            height=500,
-            paper_bgcolor='white',
-            plot_bgcolor='white',
-            showlegend=True,
-            legend=dict(
-                font=dict(size=11, color='#2c3e50'),
-                orientation="v",
-                yanchor="middle",
-                y=0.5,
-                xanchor="left",
-                x=1.02
-            )
-        )
-        
-        st.plotly_chart(fig_pie, use_container_width=True)
-        
-        st.markdown("""
-        <div style='background-color: #e3f2fd; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #2196f3; margin-top: 2rem;'>
-            <h4 style='color: #1976d2; margin-top: 0;'>* How to Read This Analysis</h4>
-            <p style='color: #0d47a1; margin-bottom: 0; line-height: 1.6;'>
-                <strong>Red bars pointing right (→)</strong>: Features that <strong>increase</strong> churn risk for this customer<br>
-                <strong>Green bars pointing left (←)</strong>: Features that <strong>decrease</strong> churn risk for this customer<br>
-                <strong>Bar length</strong>: Shows the strength of each feature's influence on the prediction
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-# ANALYTICS PAGE
-elif page == "Analytics":
-    st.title("Analytics Dashboard")
-    st.markdown("### Historical Data Analysis and Insights")
-    
-    # Load dataset
-    try:
-        df = pd.read_csv('Churn_Modelling.csv')
-        
-        col1, col2, col3, col4 = st.columns(4)
-        
-        with col1:
-            st.metric("Total Customers", f"{len(df):,}")
-        with col2:
-            churn_rate = (df['Exited'].sum() / len(df)) * 100
-            st.metric("Overall Churn Rate", f"{churn_rate:.1f}%")
-        with col3:
-            avg_balance = df['Balance'].mean()
-            st.metric("Avg Balance", f"${avg_balance:,.0f}")
-        with col4:
-            avg_age = df['Age'].mean()
-            st.metric("Avg Age", f"{avg_age:.1f} years")
-        
-        st.markdown("---")
-        
-        # Churn by Geography
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("### Churn Rate by Geography")
-            churn_by_geo = df.groupby('Geography')['Exited'].agg(['sum', 'count'])
-            churn_by_geo['rate'] = (churn_by_geo['sum'] / churn_by_geo['count']) * 100
-            
-            fig = px.bar(
-                churn_by_geo.reset_index(),
-                x='Geography',
-                y='rate',
-                color='rate',
-                color_continuous_scale=['green', 'yellow', 'red'],
-                labels={'rate': 'Churn Rate (%)'},
-                title='Churn Rate by Geography'
-            )
-            st.plotly_chart(fig, use_container_width=True)
-        
-        with col2:
-            st.markdown("### Churn Rate by Gender")
-            churn_by_gender = df.groupby('Gender')['Exited'].agg(['sum', 'count'])
-            churn_by_gender['rate'] = (churn_by_gender['sum'] / churn_by_gender['count']) * 100
-            
-            fig = px.pie(
-                churn_by_gender.reset_index(),
-                values='sum',
-                names='Gender',
-                title='Churn Distribution by Gender',
-                hole=0.4
-            )
-            st.plotly_chart(fig, use_container_width=True)
-        
-        # Age distribution
-        st.markdown("### Age Distribution and Churn")
-        fig = px.histogram(
-            df,
-            x='Age',
-            color='Exited',
-            marginal='box',
-            nbins=30,
-            labels={'Exited': 'Churned'},
-            title='Age Distribution of Customers',
-            color_discrete_map={0: 'green', 1: 'red'}
-        )
-        st.plotly_chart(fig, use_container_width=True)
-        
-        # Balance vs Churn
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("### Balance Distribution")
-            fig = px.box(
-                df,
-                x='Exited',
-                y='Balance',
-                color='Exited',
-                labels={'Exited': 'Churned', 'Balance': 'Account Balance'},
-                title='Balance by Churn Status',
-                color_discrete_map={0: 'green', 1: 'red'}
-            )
-            st.plotly_chart(fig, use_container_width=True)
-        
-        with col2:
-            st.markdown("### Products vs Churn")
-            product_churn = df.groupby('NumOfProducts')['Exited'].agg(['sum', 'count'])
-            product_churn['rate'] = (product_churn['sum'] / product_churn['count']) * 100
-            
-            fig = px.line(
-                product_churn.reset_index(),
-                x='NumOfProducts',
-                y='rate',
-                markers=True,
-                title='Churn Rate by Number of Products',
-                labels={'rate': 'Churn Rate (%)', 'NumOfProducts': 'Number of Products'}
-            )
-            st.plotly_chart(fig, use_container_width=True)
-        
-        # Correlation heatmap
-        st.markdown("### Feature Correlation Heatmap")
-        numeric_cols = ['CreditScore', 'Age', 'Tenure', 'Balance', 'NumOfProducts', 'EstimatedSalary', 'Exited']
-        corr_matrix = df[numeric_cols].corr()
-        
-        fig = px.imshow(
-            corr_matrix,
-            text_auto=True,
-            aspect="auto",
-            color_continuous_scale='RdBu_r',
-            title='Feature Correlation Matrix'
-        )
-        st.plotly_chart(fig, use_container_width=True)
-        
-    except Exception as e:
-        st.error(f"Error loading analytics data: {str(e)}")
-
-# ABOUT PAGE
-elif page == "About":
-    st.title("About This Application")
-    
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        st.markdown("""
-        ### Purpose
-        
-        This Customer Churn Prediction System helps businesses identify customers who are likely to leave, 
-        enabling proactive retention strategies. By leveraging machine learning and explainable AI, 
-        organizations can make data-driven decisions to improve customer satisfaction and reduce churn.
-        
-        ### Technology Stack
-        
-        • **Machine Learning**: TensorFlow/Keras Neural Network  
-        • **Frontend**: Streamlit  
-        • **Data Processing**: Pandas, NumPy, Scikit-learn  
-        • **Visualization**: Plotly, Matplotlib  
-        • **Explainability**: SHAP (SHapley Additive exPlanations)
-        
-        ### Model Information
-        
-        • **Architecture**: Deep Neural Network  
-        • **Training Data**: 10,000+ customer records  
-        • **Features**: 12 customer attributes  
-        • **Accuracy**: ~86%  
-        • **Precision**: ~84%  
-        • **Recall**: ~79%
-        
-        ### Key Features
-        
-        1. **Real-time Predictions**: Instant churn probability calculation  
-        2. **SHAP Analysis**: Explainable AI showing feature importance  
-        3. **Interactive Dashboard**: Visualize customer data and trends  
-        4. **Actionable Insights**: Specific recommendations for each customer  
-        5. **Historical Analytics**: Understand patterns in your customer base
-        
-        ### Use Cases
-        
-        • **Banking**: Identify customers likely to close accounts  
-        • **Telecom**: Predict subscription cancellations  
-        • **SaaS**: Forecast customer downgrades or cancellations  
-        • **Retail**: Anticipate customer defection to competitors  
-        • **Insurance**: Predict policy non-renewals
-        
-        ### Future Enhancements
-        
-        • Batch prediction capability  
-        • API integration for real-time scoring  
-        • Advanced SHAP visualizations  
-        • A/B testing framework for retention strategies  
-        • Automated alert system for high-risk customers
-        """)
-    
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer
-st.markdown("---")
 st.markdown("""
-<div style='text-align: center; color: #666; padding: 1rem;'>
-    <p>Customer Churn Prediction System v2.0 | Built with Streamlit</p>
-    <p>© 2026 All Rights Reserved | <a href='#'>Privacy Policy</a> | <a href='#'>Terms of Service</a></p>
+<div style="text-align: center; padding: 4rem 2rem; color: #64748b;">
+    <p style="margin-bottom: 0.5rem; font-weight: 600;">ChurnPredict v3.0</p>
+    <p style="font-size: 0.9rem;">Powered by Neural Networks & TensorFlow</p>
+    <p style="font-size: 0.85rem; margin-top: 1rem;">© 2026 All Rights Reserved | Created by <a href="https://github.com/Ujjwalray1011" style="color: #4F46E5; text-decoration: none;">Ujjwal Ray</a></p>
 </div>
 """, unsafe_allow_html=True)
