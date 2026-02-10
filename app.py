@@ -1405,75 +1405,57 @@ with tab4:
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.markdown("""
-        <div class="metric-card">
-            <h2 style="color: #4F46E5;">🎯 Mission</h2>
-            <p style="line-height: 1.8; color: #cbd5e1;">
-                ChurnPredict helps businesses identify at-risk customers before they leave. 
-                Using state-of-the-art neural networks and explainable AI, we provide actionable 
-                insights that drive retention strategies and improve customer lifetime value.
-            </p>
-            
-            <h2 style="color: #4F46E5; margin-top: 2rem;">🛠️ Technology Stack</h2>
-            <ul style="line-height: 2; color: #cbd5e1;">
-                <li><strong>Deep Learning:</strong> TensorFlow/Keras Neural Network</li>
-                <li><strong>Frontend:</strong> Streamlit with Custom UI</li>
-                <li><strong>Data Processing:</strong> Pandas, NumPy, Scikit-learn</li>
-                <li><strong>Visualization:</strong> Plotly Interactive Charts</li>
-                <li><strong>Explainability:</strong> SHAP-like Analysis</li>
-            </ul>
-            
-            <h2 style="color: #4F46E5; margin-top: 2rem;">📊 Model Performance</h2>
-            <ul style="line-height: 2; color: #cbd5e1;">
-                <li><strong>Accuracy:</strong> ~86%</li>
-                <li><strong>Precision:</strong> ~84%</li>
-                <li><strong>Recall:</strong> ~79%</li>
-                <li><strong>Training Data:</strong> 10,000+ customer records</li>
-                <li><strong>Response Time:</strong> <100ms</li>
-            </ul>
-            
-            <h2 style="color: #4F46E5; margin-top: 2rem;">🚀 Key Features</h2>
-            <ul style="line-height: 2; color: #cbd5e1;">
-                <li>✅ Real-time Churn Predictions</li>
-                <li>📊 SHAP Analysis for Explainability</li>
-                <li>📈 Interactive Analytics Dashboard</li>
-                <li>💡 Actionable Recommendations</li>
-                <li>🎨 Beautiful Animated Interface</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="metric-card glow-on-hover">
-            <h3 style="color: #4F46E5; text-align: center;">👨‍💻 Creator</h3>
-            <div style="text-align: center; margin: 2rem 0;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">🎯</div>
-                <h2>Ujjwal Ray</h2>
-                <p style="color: #94a3b8;">ML Engineer & Developer</p>
-                <a href="https://github.com/Ujjwalray1011" target="_blank" style="
-                    display: inline-block;
-                    margin-top: 1rem;
-                    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-                    color: white;
-                    padding: 0.75rem 1.5rem;
-                    border-radius: 8px;
-                    text-decoration: none;
-                    font-weight: 600;
-                    transition: all 0.3s ease;
-                ">
-                    View on GitHub →
-                </a>
-            </div>
-        </div>
+        st.info("### 🎯 Mission")
+        st.write("""
+        ChurnPredict helps businesses identify at-risk customers before they leave. 
+        Using state-of-the-art neural networks and explainable AI, we provide actionable 
+        insights that drive retention strategies and improve customer lifetime value.
+        """)
         
-        <div class="metric-card glow-on-hover" style="margin-top: 1rem;">
-            <h3 style="color: #4F46E5; text-align: center;">⭐ Support</h3>
-            <p style="text-align: center; color: #cbd5e1; line-height: 1.6;">
-                If you find this project helpful, please consider giving it a star on GitHub!
-            </p>
+        st.info("### 🛠️ Technology Stack")
+        st.write("""
+        - **Deep Learning:** TensorFlow/Keras Neural Network
+        - **Frontend:** Streamlit with Custom UI
+        - **Data Processing:** Pandas, NumPy, Scikit-learn
+        - **Visualization:** Plotly Interactive Charts
+        - **Explainability:** SHAP-like Analysis
+        """)
+        
+        st.info("### 📊 Model Performance")
+        st.write("""
+        - **Accuracy:** ~86%
+        - **Precision:** ~84%
+        - **Recall:** ~79%
+        - **Training Data:** 10,000+ customer records
+        - **Response Time:** <100ms
+        """)
+        
+        st.info("### 🚀 Key Features")
+        st.write("""
+        - ✅ Real-time Churn Predictions
+        - 📊 SHAP Analysis for Explainability
+        - 📈 Interactive Analytics Dashboard
+        - 💡 Actionable Recommendations
+        - 🎨 Beautiful Animated Interface
+        """)
+
+
+    with col2:
+        st.success("### 👨‍💻 Creator")
+        st.markdown("""
+        <div style="text-align: center; margin: 2rem 0;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎯</div>
         </div>
         """, unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>Ujjwal Ray</h2>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; color: #94a3b8;'>ML Engineer & Developer</p>", unsafe_allow_html=True)
+        st.link_button("View on GitHub →", "https://github.com/Ujjwalray1011", use_container_width=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        st.info("### ⭐ Support")
+        st.write("If you find this project helpful, please consider giving it a star on GitHub!")
+
 
 # Footer
 st.markdown("<br><br>", unsafe_allow_html=True)
