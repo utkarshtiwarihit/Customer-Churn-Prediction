@@ -669,11 +669,12 @@ body {
         <div class="logo-text">Churn<span>Predict</span></div>
     </div>
     <div class="nav-links">
-        <a class="nav-link">Home</a>
-        <a class="nav-link">Features</a>
-        <a class="nav-link">Predict</a>
-        <a class="nav-link">Analytics</a>
-    </div>
+    <a class="nav-link" onclick="scrollToSection('home')">Home</a>
+    <a class="nav-link" onclick="scrollToSection('features')">Features</a>
+    <a class="nav-link" onclick="scrollToSection('predict')">Predict</a>
+    <a class="nav-link" onclick="scrollToSection('analytics')">Analytics</a>
+</div>
+
     <button class="cta-button">✨ Try Predict</button>
 </div>
 
@@ -1465,3 +1466,4 @@ st.markdown("""
     <p style="font-size: 0.9rem;">© 2026 All Rights Reserved | Built with ❤️ using Streamlit</p>
 </div>
 """, unsafe_allow_html=True)
+
