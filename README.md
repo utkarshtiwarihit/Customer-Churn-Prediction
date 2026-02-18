@@ -3,7 +3,7 @@
 A machine learning web application built with Streamlit and TensorFlow to predict customer churn probability for banking customers.
 
 ## 🌐 Live Demo
-### **[🚀 Try the App Here: https://ujjwal-ann.streamlit.app/](https://ujjwal-ann.streamlit.app/)**
+### **[🚀 Try the App Here: https://customer-ann.streamlit.app/](https://customer-ann.streamlit.app/)**
 
 ## 👤 Owner
 https://github.com/utkarshtiwarihit
@@ -139,4 +139,5 @@ Ensure all `.pkl` and `.h5` files are in the same directory as `app.py`
 ---
 
 ⭐ If you found this project helpful, please consider giving it a star!
+
 
