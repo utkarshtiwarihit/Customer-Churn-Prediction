@@ -134,10 +134,11 @@ Ensure all `.pkl` and `.h5` files are in the same directory as `app.py`
 
 ## 📧 Contact
 
-**Ujjwal Ray** - https://github.com/utkarshtiwarihit
+**Utkarsh Tiwari** - https://github.com/utkarshtiwarihit
 
 ---
 
 ⭐ If you found this project helpful, please consider giving it a star!
+
 
 
