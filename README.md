@@ -6,7 +6,7 @@ A machine learning web application built with Streamlit and TensorFlow to predic
 ### **[🚀 Try the App Here: https://ujjwal-ann.streamlit.app/](https://ujjwal-ann.streamlit.app/)**
 
 ## 👤 Owner
-**[@Ujjwalray1011](https://github.com/Ujjwalray1011)**
+https://github.com/utkarshtiwarihit
 
 ---
 
@@ -134,8 +134,9 @@ Ensure all `.pkl` and `.h5` files are in the same directory as `app.py`
 
 ## 📧 Contact
 
-**Ujjwal Ray** - [@Ujjwalray1011](https://github.com/Ujjwalray1011)
+**Ujjwal Ray** - https://github.com/utkarshtiwarihit
 
 ---
 
 ⭐ If you found this project helpful, please consider giving it a star!
+
